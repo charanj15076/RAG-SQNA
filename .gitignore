@@ -1,0 +1,17 @@
+# Ignore virtual environment folder
+.venv/
+
+# Ignore models folder
+models/
+
+# Optional: Ignore Python bytecode files
+*.pyc
+*.pyo
+__pycache__/
+
+# Optional: Ignore IDE specific files (e.g., VSCode)
+.vscode/
+
+# Optional: Ignore system-specific files
+.DS_Store
+Thumbs.db
