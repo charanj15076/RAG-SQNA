@@ -1,9 +1,12 @@
 import streamlit as st
-from llm_chains import load_normal_chain
+from llm_chains import load_normal_chain, load_pdf_chat_chain
 from langchain.memory import StreamlitChatMessageHistory
 from streamlit_mic_recorder import mic_recorder
+from pdf_handler import add_documents_to_db
 from utils import save_chat_history_json, get_timestamp, load_chat_history_json
 from audio_handler import transcribe_audio
+from image_handler import handle_image
+from pdf_handler import add_documents_to_db
 import yaml
 import os
 
@@ -12,6 +15,8 @@ with open("config.yaml", "r") as f:
 
 
 def load_chain(chat_history):
+    if st.session_state.pdf_chat:
+        return load_pdf_chat_chain(chat_history)
     return load_normal_chain(chat_history)
 
 def clear_input_field():
@@ -34,6 +39,8 @@ def save_chat_history():
         else:
             save_chat_history_json(st.session_state.history, config["chat_history_path"]+st.session_state.session_key)
 
+def toggle_pdf_chat():
+    st.session_state.pdf_chat = True
 
 def main():
     st.title("Mutlimodal Local Chat App")
@@ -54,6 +61,7 @@ def main():
     
     index = chat_sessions.index(st.session_state.session_index_tracker)
     st.sidebar.selectbox("Select a chat session",chat_sessions, key="session_key", index = index, on_change=track_index)
+    st.sidebar.toggle("PDF Chat", key = "pdf_chat", value = False)
 
     if st.session_state.session_key != "new_session":
         file_path = config["chat_history_path"]+st.session_state.session_key
@@ -75,6 +83,12 @@ def main():
         send_button = st.button("Send", key = "send_button", on_click=clear_input_field)
 
     uploaded_audio = st.sidebar.file_uploader("Upload an audio file",type=["wav","mp3","ogg"])
+    uploaded_image = st.sidebar.file_uploader("Upload an image file",type=["jpg","jpeg","png"])
+    uploaded_pdf = st.sidebar.file_uploader("Upload a pdf file",accept_multiple_files=True,type=["pdf"],key = "pdf_upload", on_change = toggle_pdf_chat)
+
+    if uploaded_pdf:
+        with st.spinner("Processing pdf ..."):
+            add_documents_to_db(uploaded_pdf)
 
     if uploaded_audio:
         transcribed_audio = transcribe_audio(uploaded_audio.getvalue())
@@ -87,6 +101,17 @@ def main():
         llm_chain.run(transcribed_audio)
 
     if send_button or st.session_state.send_input:
+        if uploaded_image:
+            with st.spinner("Processing image...."):
+                user_message = "Describe this image in detail please."
+                if st.session_state.user_question != "":
+                    user_message = st.session_state.user_question
+                    st.session_state.user_question = ""
+                llm_answer = handle_image(uploaded_image.getvalue(), st.session_state.user_question)
+                chat_history.add_user_message(user_message)
+                chat_history.add_ai_message(llm_answer)
+
+
         if st.session_state.user_question != "":
             llm_response = llm_chain.run(st.session_state.user_question)
             st.session_state.user_question = ""

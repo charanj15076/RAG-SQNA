@@ -1,6 +1,11 @@
 import json
 from langchain.schema.messages import HumanMessage, AIMessage
 from datetime import datetime
+import yaml
+
+def load_config():
+    with open("config.yaml", "r") as f:
+        return yaml.safe_load(f)
 
 def save_chat_history_json(chat_history, file_path):
     print("file_path ",file_path)
