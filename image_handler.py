@@ -11,9 +11,9 @@ def convert_bytes_to_base64(image_bytes):
 
 def handle_image(image_bytes, user_message):
 
-    chat_handler = Llava15ChatHandler(clip_model_path="./models/llava/mmproj-model-f16.gguf")
+    chat_handler = Llava15ChatHandler(clip_model_path="./models/mmproj-model-f16.gguf")
     llm = Llama(
-    model_path="./models/llava/ggml-model-q5_k.gguf",
+    model_path="./models/ggml-model-q5_k.gguf",
     logits_all = True,
     chat_handler=chat_handler,
     n_ctx=1024, # n_ctx should be increased to accommodate the image embedding
