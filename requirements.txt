@@ -13,3 +13,4 @@ ctransformers
 llama-cpp-python
 torch
 InstructorEmbedding 
+langchain-community==0.3.1
