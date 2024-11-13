@@ -16,6 +16,7 @@ def handle_image(image_bytes, user_message):
     model_path="./models/ggml-model-q5_k.gguf",
     logits_all = True,
     chat_handler=chat_handler,
+    n_gpu_layers=-1,
     n_ctx=1024, # n_ctx should be increased to accommodate the image embedding
     )
     image_base64 = convert_bytes_to_base64(image_bytes)

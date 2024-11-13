@@ -1,4 +1,5 @@
-from langchain.embeddings import HuggingFaceInstructEmbeddings
+# from langchain.embeddings import HuggingFaceInstructEmbeddings
+from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain.chains import LLMChain 
 from langchain.chains.retrieval_qa.base import RetrievalQA
 from langchain.memory import ConversationBufferWindowMemory
@@ -17,11 +18,14 @@ def create_llm(model_path = config["model_path"]["large"], model_type = config["
     llm = CTransformers(model = model_path,model_type = model_type, config = model_config)
     return llm
 
+# def create_embeddings(embeddings_path = config["embeddings_path"]):
+#     return HuggingFaceInstructEmbeddings(model_name = embeddings_path)
+
 def create_embeddings(embeddings_path = config["embeddings_path"]):
-    return HuggingFaceInstructEmbeddings(model_name = embeddings_path)
+    return HuggingFaceEmbeddings(model_name=embeddings_path)
 
 def create_chat_memory(chat_history):
-    return ConversationBufferWindowMemory(memory_key = "history", chat_memory = chat_history, k = 3)
+    return ConversationBufferWindowMemory(memory_key = "history", chat_memory = chat_history, k = 1)
 
 def create_prompt_from_template(template):
     return PromptTemplate.from_template(template)
