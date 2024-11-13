@@ -8,6 +8,7 @@ from langchain_chroma import Chroma
 from prompt_template import memory_prompt_template
 import chromadb
 import yaml
+import streamlit as st
 
 with open("config.yaml", "r") as f:
     config = yaml.safe_load(f)
@@ -69,5 +70,7 @@ class pdfChatChain:
         llm = create_llm()
         # chat_prompt = create_prompt_from_template(memory_prompt_template)
         self.llm_chain = load_retreival_chain(llm, self.memory, self.vector_db)
+
     def run(self,user_input):
+        print("PDF chat chain is running.....")
         return self.llm_chain.run(query  = user_input,history = self.memory.chat_memory.messages, stop=["Human:"])

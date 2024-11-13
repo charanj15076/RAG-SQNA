@@ -3,8 +3,8 @@ from langchain.schema.document import Document
 from llm_chains import load_vectordb, create_embeddings
 import pypdfium2
 
-def get_pdf_texts(pdf_bytes):
-    return [extract_text_from_pdf(pdf_bytes) for pdf_bytes in pdf_bytes]
+def get_pdf_texts(pdf_files):
+    return [extract_text_from_pdf(pdf_bytes) for pdf_bytes in pdf_files]
 
 def extract_text_from_pdf(pdf_bytes):
     pdf_file =  pypdfium2.PdfDocument(pdf_bytes)
@@ -20,7 +20,7 @@ def get_document_chunks(text_list):
     documents = []
     for text in text_list:
         for chunk in get_text_chunks(text):
-            print(chunk)
+            # print(chunk)
             documents.append(Document(page_content=chunk))
     return documents
 

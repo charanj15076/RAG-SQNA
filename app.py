@@ -16,6 +16,7 @@ with open("config.yaml", "r") as f:
 
 def load_chain(chat_history):
     if st.session_state.pdf_chat:
+        st.spinner("Processing chat .....")
         return load_pdf_chat_chain(chat_history)
     return load_normal_chain(chat_history)
 
@@ -71,6 +72,7 @@ def main():
 
     chat_history = StreamlitChatMessageHistory(key = "history")
     llm_chain = load_chain(chat_history)
+    print("loaded llm_chain", llm_chain)
     user_input = st.text_input("Type your input here", key = "user_input", on_change = set_send_input)
     voice_recording_column, send_button_column = st.columns(2)
     with voice_recording_column:
@@ -113,6 +115,7 @@ def main():
 
 
         if st.session_state.user_question != "":
+            llm_chain = load_chain(chat_history)
             llm_response = llm_chain.run(st.session_state.user_question)
             st.session_state.user_question = ""
     
