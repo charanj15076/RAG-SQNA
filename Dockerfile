@@ -12,7 +12,7 @@ WORKDIR /app
 
 COPY requirements.txt .
 
-RUN pip install --no-cache-dir -r librarues.txt
+RUN pip install --no-cache-dir -requirements.txt
 
 COPY . .
 
