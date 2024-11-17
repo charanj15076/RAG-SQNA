@@ -7,14 +7,12 @@ RUN apt-get update && apt-get install -y \
     g++ \
     && rm -rf /var/lib/apt/lists/*
 
-RUN apt-get install -y awscli
-
 
 WORKDIR /app
 
 COPY requirements.txt .
 
-RUN pip install --no-cache-dir -requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
