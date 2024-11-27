@@ -15,3 +15,5 @@ torch==2.4.1
 InstructorEmbedding
 langchain-community
 sentence-transformers==3.2.1
+dvc
+dvc_s3
