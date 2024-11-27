@@ -24,4 +24,7 @@ COPY . .
 EXPOSE 8501
 
 # Command to run the Streamlit app
-CMD ["streamlit","run", "app.py"]
+
+# CMD ["streamlit","run", "app.py"]
+CMD ["sh", "-c", "dvc remote add myremote s3://dvc-models-rag &&
+dvc pull && streamlit run app.py"]
