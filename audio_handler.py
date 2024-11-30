@@ -13,6 +13,7 @@ def convert_bytes_to_array(audio_bytes):
 def transcribe_audio(audio_bytes):
 
     device = "cuda:0" if torch.cuda.is_available() else "cpu"
+    print("device in audio handler",device)
 
     pipe = pipeline(
         task = "automatic-speech-recognition",
