@@ -2,6 +2,13 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.schema.document import Document
 from llm_chains import load_vectordb, create_embeddings
 import pypdfium2
+import chromadb
+import yaml
+
+
+with open("config.yaml", "r") as f:
+    config = yaml.safe_load(f)
+
 
 def get_pdf_texts(pdf_files):
     return [extract_text_from_pdf(pdf_bytes) for pdf_bytes in pdf_files]
@@ -27,6 +34,9 @@ def get_document_chunks(text_list):
 def add_documents_to_db(pdf_bytes):
     texts = get_pdf_texts(pdf_bytes)
     documents = get_document_chunks(texts)
+
+    vector_db = load_vectordb(create_embeddings())
+    vector_db.delete_collection()
     vector_db = load_vectordb(create_embeddings())
     vector_db.add_documents(documents)
     print("Document added to db")
