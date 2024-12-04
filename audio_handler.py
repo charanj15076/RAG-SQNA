@@ -2,18 +2,20 @@ import torch
 from transformers import pipeline
 import librosa
 import io
+import base64
+import boto3
 
 def convert_bytes_to_array(audio_bytes):
     audio_bytes = io.BytesIO(audio_bytes)
     audio, sr = librosa.load(audio_bytes)
-    print(sr)
+    # print(sr)
     return audio
 
 
 def transcribe_audio(audio_bytes):
 
     device = "cuda:0" if torch.cuda.is_available() else "cpu"
-    print("device in audio handler",device)
+    # print("Device",device)
 
     pipe = pipeline(
         task = "automatic-speech-recognition",
@@ -24,4 +26,5 @@ def transcribe_audio(audio_bytes):
     audio_array = convert_bytes_to_array(audio_bytes)
     prediction = pipe(audio_array, batch_size=1)["text"]
     return prediction
+
 

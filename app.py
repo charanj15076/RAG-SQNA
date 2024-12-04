@@ -44,9 +44,10 @@ def toggle_pdf_chat():
     st.session_state.pdf_chat = True
 
 def main():
+    st.set_page_config(page_title="Multimodal Local Chat App", page_icon="💬", layout="wide")
     st.title("Mutlimodal Local Chat App")
     chat_container = st.container()
-    st.sidebar.title("Chat Sessions")
+    st.sidebar.title("📂 Chat Sessions")
     chat_sessions = ["new_session"]+os.listdir(config["chat_history_path"])
 
 
@@ -73,7 +74,7 @@ def main():
     chat_history = StreamlitChatMessageHistory(key = "history")
     llm_chain = load_chain(chat_history)
     print("loaded llm_chain", llm_chain)
-    user_input = st.text_input("Type your input here", key = "user_input", on_change = set_send_input)
+    user_input = st.text_input("Type your input here", key = "user_input")
     voice_recording_column, send_button_column = st.columns(2)
     with voice_recording_column:
         voice_recording = mic_recorder(
@@ -117,6 +118,10 @@ def main():
         if st.session_state.user_question != "":
             llm_chain = load_chain(chat_history)
             llm_response = llm_chain.run(st.session_state.user_question)
+            # print(llm_response)
+            if st.session_state.pdf_chat:
+                chat_history.add_user_message(st.session_state.user_question)
+                chat_history.add_ai_message(llm_response)
             st.session_state.user_question = ""
     
     if chat_history.messages != []:

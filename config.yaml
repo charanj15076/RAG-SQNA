@@ -6,7 +6,7 @@ model_config:
    'max_new_tokens' : 512
    'temperature' : 0
    'context_length' : 4096
-   'gpu_layers' : 20
+   'gpu_layers' : 0
    'threads' : -1
 
 chat_config:

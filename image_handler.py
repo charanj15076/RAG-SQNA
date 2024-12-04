@@ -1,37 +1,28 @@
-from llama_cpp import Llama
-from llama_cpp.llama_chat_format import Llava15ChatHandler
 import base64
+from transformers import BlipProcessor, BlipForConditionalGeneration, CLIPProcessor, CLIPModel
+import torch
+from PIL import Image
+from io import BytesIO
 from utils import load_config
 
 config = load_config()
-
 def convert_bytes_to_base64(image_bytes):
     encoded_string = base64.b64encode(image_bytes).decode("utf-8")
-    return "data:image/jpeg;base64,"+ encoded_string
+    return "data:image/jpeg;base64," + encoded_string
 
 def handle_image(image_bytes, user_message):
+    # Load BLIP model and processor from Hugging Face
+    processor = BlipProcessor.from_pretrained("Salesforce/blip-image-captioning-base")
+    model = BlipForConditionalGeneration.from_pretrained("Salesforce/blip-image-captioning-base")
 
-    chat_handler = Llava15ChatHandler(clip_model_path="./models/mmproj-model-f16.gguf")
-    llm = Llama(
-    model_path="./models/ggml-model-q5_k.gguf",
-    logits_all = True,
-    chat_handler=chat_handler,
-    n_gpu_layers=20,#-1
-    n_ctx=2048, # n_ctx should be increased to accommodate the image embedding 1024
-    )
-    image_base64 = convert_bytes_to_base64(image_bytes)
+    # Convert the image bytes to a PIL Image
+    image = Image.open(BytesIO(image_bytes))
 
-    
-    output = llm.create_chat_completion(
-        messages = [
-            {"role": "system", "content": "You are an assistant who perfectly describes images."},
-            {
-                "role": "user",
-                "content": [
-                    {"type" : "text", "text": user_message},
-                    {"type": "image_url", "image_url": {"url": image_base64 } }
-                ]
-            }
-        ]
-    )
-    return output["choices"][0]["message"]["content"]
+    # Process the image and user message for BLIP model
+    inputs = processor(images=image, text=user_message, return_tensors="pt")
+
+    # Generate output based on the image and text (responding to the user's question about the image)
+    out = model.generate(**inputs)
+    response = processor.decode(out[0], skip_special_tokens=True)
+
+    return response
