@@ -21,11 +21,11 @@ COPY . .
 # Script to download models
 # RUN python download_models.py
 
-EXPOSE 8501
+EXPOSE 80
 
 # Command to run the Streamlit app
 
-CMD ["streamlit","run", "app.py"]
+CMD ["streamlit","run", "app.py", "--server.port", "80"]
 
 
 # CMD ["sh", "-c", "dvc remote add myremote s3://dvc-models-rag && dvc pull && streamlit run app.py"]
