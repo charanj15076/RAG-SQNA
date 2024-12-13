@@ -47,7 +47,7 @@ def main():
     st.set_page_config(page_title="Multimodal Local Chat App", page_icon="💬", layout="wide")
     st.title("Mutlimodal Local Chat App")
     chat_container = st.container()
-    st.sidebar.title("📂 Chat Sessions 1")
+    st.sidebar.title("📂 Chat Sessions ")
     chat_sessions = ["new_session"]+os.listdir(config["chat_history_path"])
 
 
