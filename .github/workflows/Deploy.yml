@@ -45,7 +45,7 @@ jobs:
       - name: Deploy to ECS
         uses: imehedi/actions-awscli-v2@latest
         with:
-          args: ecs update-service --cluster MultimodalAIcluster1 --service multimodal-service1 --force-new-deployment
+          args: ecs update-service --cluster MultimodalAIcluster2 --service multimodal-service5 --force-new-deployment
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
