@@ -14,12 +14,14 @@ with open("config.yaml", "r") as f:
     config = yaml.safe_load(f)
 
 
+#loads pdf_chain or normal chain based on selection
 def load_chain(chat_history):
     if st.session_state.pdf_chat:
         st.spinner("Processing chat .....")
         return load_pdf_chat_chain(chat_history)
     return load_normal_chain(chat_history)
 
+#clears input after clicking send button
 def clear_input_field():
     st.session_state.user_question = st.session_state.user_input
     st.session_state.user_input = ""
@@ -31,6 +33,7 @@ def set_send_input():
 def track_index():
     st.session_state.session_index_tracker = st.session_state.session_key
 
+#chat history management
 def save_chat_history():
 
     if st.session_state.history != []:
@@ -40,6 +43,7 @@ def save_chat_history():
         else:
             save_chat_history_json(st.session_state.history, config["chat_history_path"]+st.session_state.session_key)
 
+#a toggle on dashboard to select pdf_chat_chain
 def toggle_pdf_chat():
     st.session_state.pdf_chat = True
 
@@ -73,7 +77,7 @@ def main():
 
     chat_history = StreamlitChatMessageHistory(key = "history")
     llm_chain = load_chain(chat_history)
-    print("loaded llm_chain", llm_chain)
+    print("llm_chain", llm_chain) #loads llm based on requirement
     user_input = st.text_input("Type your input here", key = "user_input")
     voice_recording_column, send_button_column = st.columns(2)
     with voice_recording_column:
@@ -85,8 +89,11 @@ def main():
     with send_button_column:
         send_button = st.button("Send", key = "send_button", on_click=clear_input_field)
 
+    #button to upload audio
     uploaded_audio = st.sidebar.file_uploader("Upload an audio file",type=["wav","mp3","ogg"])
+    #button to upload image
     uploaded_image = st.sidebar.file_uploader("Upload an image file",type=["jpg","jpeg","png"])
+    #button to upload document
     uploaded_pdf = st.sidebar.file_uploader("Upload a pdf file",accept_multiple_files=True,type=["pdf"],key = "pdf_upload", on_change = toggle_pdf_chat)
 
     if uploaded_pdf:

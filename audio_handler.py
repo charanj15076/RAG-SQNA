@@ -5,6 +5,8 @@ import io
 import base64
 import boto3
 
+
+#converts audio bytes to array
 def convert_bytes_to_array(audio_bytes):
     audio_bytes = io.BytesIO(audio_bytes)
     audio, sr = librosa.load(audio_bytes)
@@ -12,6 +14,7 @@ def convert_bytes_to_array(audio_bytes):
     return audio
 
 
+#pipeline for audio output
 def transcribe_audio(audio_bytes):
 
     device = "cuda:0" if torch.cuda.is_available() else "cpu"

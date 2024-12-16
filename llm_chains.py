@@ -23,21 +23,26 @@ with open("config.yaml", "r") as f:
     config = yaml.safe_load(f)
 
 
-
+#connection to aws bedrock (ivoking bedrock-runtime client)
 bedrock_client = boto3.client(service_name="bedrock-runtime")
 
+
+#Normal chain loads mistral7b
 def create_llm(model_path = config["model_path"]["large"], model_type = config["model_type"], model_config = config["model_config"]):
     llm = CTransformers(model = model_path,model_type = model_type, config = model_config)
     return llm
 
+#pdf chain loads LLAMA3 from aws bedrock
 def get_rag_llm():
     llm = Bedrock(model_id = "meta.llama3-8b-instruct-v1:0", client = bedrock_client,
                   model_kwargs = {'max_gen_len':512})
     return llm
 
+#converts user query to embeddings
 def create_embeddings(embeddings_path = config["embeddings_path"]):
     return HuggingFaceEmbeddings(model_name=embeddings_path)
 
+#chat history for context
 def create_chat_memory(chat_history):
     return ConversationBufferWindowMemory(memory_key = "history", chat_memory = chat_history, k = 1)
 
@@ -53,6 +58,8 @@ def create_llm_chain(llm, chat_prompt, memory):
 
 def load_normal_chain(chat_history):
     return chatChain(chat_history)
+
+# function to create chroma db
 
 def load_vectordb(embeddings):
     persistent_client = chromadb.PersistentClient("chroma_db")
